@@ -60,9 +60,8 @@ excel_sheets(pathfile)
 
 There's rapidly growing interest to measure and understand quality of care - especially experience among clients. However, it is challenging to conduct conventional client exit interviews in many low-resource settings due to resource constraints, and innovative approaches have been used to obtain information from clients such as SMS, phone interviews, and surveys on social media platforms.    
 
-However, client sampling faces many challenges from getting a good quality sampling frame to low contact and response rates. Critical remaining questions are **how much bias is in samples of such assessments**, and **if (and how much) the sample bias matters to understand clients' experience of care**.    
+However, innovative approaches face challenges from getting a good quality sampling frame to achieving high contact and response rates. Critical remaining questions are **how much bias is in samples of such assessments**, and **if (and how much) the sample bias matters to understand quality of care - especially experience of care**.    
 
----
 We explore these questions, using PMA family planning client data from four countries/geographies: Burkina Faso, Kenya, and two states in Nigeria, Kano and Lagos. Implications from this analysis would be most appropriate for phone surveys, since other modes have additional barriers such as literacy and use of social media.   </div>
 
 Note: For more information on the PMA, [see here](www.pmadata.org). 
