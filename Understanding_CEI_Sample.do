@@ -39,7 +39,6 @@ numlabel, add
 ************************************************************************
 
 cd "~/Dropbox/0iSquared/iSquared_PMA/PMA_QoC_Followup/"
-global dataprelim 	"~/Dropbox/0Data/PMA/PMA_prelim100/"
 global data			"~/Dropbox/0Data/PMA/"
 global dataanalysis			"~/Dropbox/0iSquared/iSquared_PMA/PMA_QoC_Followup/Data/"
 	
@@ -1152,21 +1151,58 @@ use CRall_allsurveys.dta, clear
 	destring facility_ID, replace
 
 	tab ceifu xsurvey, m
+
+	foreach survey in $surveylist{	
+		tab xsurvey if xsurvey=="`survey'"
+		xtlogit ceifu ysatisfiedvery if xsurvey=="`survey'", or i(facility_ID) nolog
+		estimates store M1_`survey'
+	}	
 	
 	foreach survey in $surveylist{	
-		xtlogit ceifu yedu_sec_more yhhladder yage if xsurvey=="`survey'", or i(facility_ID) nolog
-		estimates store M1_`survey'
+		xtlogit ceifu ysatisfiedvery yage yedu_sec_more yhhladder if xsurvey=="`survey'", or i(facility_ID) nolog
+		estimates store M2_`survey'
+	}	
+	
+	foreach survey in $surveylist{	
+		xtlogit ceifu ysatisfiedvery yage yedu_sec_more yhhladder5 if xsurvey=="`survey'", or i(facility_ID) nolog
+		estimates store M3_`survey'
 	}		
-
-	#delimit; 
-	outreg2 [M1_*] 			
-		using RegressionTables/Understanding_CEI_Sample_Regression.xls, 
-		bdec(2) bfmt(f)  
-		cdec(2) cfmt(f) 
-		replace excel nocons aster label eform ci 
-		sortvar($covage $covedu $covunion $covvisit $covmethod $covside $covready $covqcc $covqcc2 qcc_info_sideeffects qcc_disresp_pressure) 
-		;
-		#delimit cr		
+	
+		#delimit; 
+		outreg2 [M1_* M2_* M3_*] 	
+			using Understanding_CEI_Sample_Regression_ysatisfiedvery.xls, 
+			bdec(2) bfmt(f)  
+			cdec(2) cfmt(f) 
+			replace excel nocons aster label eform ci 
+			sortvar(ysatisfiedvery yage yedu_sec_more yhhladder yhhladder5) 
+			;
+			#delimit cr		
+		
+	foreach survey in $surveylist{	
+		tab xsurvey if xsurvey=="`survey'"
+		xtlogit ceifu qcc__mean if xsurvey=="`survey'", or i(facility_ID) nolog
+		estimates store M1_`survey'
+	}	
+	
+	foreach survey in $surveylist{	
+		xtlogit ceifu qcc__mean yage yedu_sec_more yhhladder if xsurvey=="`survey'", or i(facility_ID) nolog
+		estimates store M2_`survey'
+	}	
+	
+	foreach survey in $surveylist{	
+		xtlogit ceifu qcc__mean yage yedu_sec_more yhhladder5 if xsurvey=="`survey'", or i(facility_ID) nolog
+		estimates store M3_`survey'
+	}		
+	
+		#delimit; 
+		outreg2 [M1_* M2_* M3_*] 	
+			using Understanding_CEI_Sample_Regression_qcc.xls, 
+			bdec(2) bfmt(f)  
+			cdec(2) cfmt(f) 
+			replace excel nocons aster label eform ci 
+			sortvar(qcc__mean yage yedu_sec_more yhhladder yhhladder5) 
+			;
+			#delimit cr				
 		
 erase temp.dta
 erase temp2.dta		

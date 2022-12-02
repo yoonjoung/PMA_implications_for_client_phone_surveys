@@ -65,9 +65,10 @@ However, client sampling faces many challenges from getting a good quality sampl
 ---
 We explore these questions, using PMA family planning client data from four countries/geographies: Burkina Faso, Kenya, and two states in Nigeria, Kano and Lagos. Implications from this analysis would be most appropriate for phone surveys, since other modes have additional barriers such as literacy and use of social media.   </div>
 
-Note: For more information on the PMA, [see here](www.pmadata.org). For PMA client sampling methods and implementation, [see here](https://github.com/yoonjoung/PMA_implications_for_client_phone_surveys/blob/main/PMA_CEI_QoC_Satisfaction_2021%2011%2030.pdf) and [here](https://rpubs.com/YJ_Choi/PMA_CEI_Sample).      
+Note: For more information on the PMA, [see here](www.pmadata.org). 
 
 #### 2. Data and methods
+Detailed information about methods and implementation results of PMA client sampling is available [here](https://github.com/yoonjoung/PMA_implications_for_client_phone_surveys/blob/main/PMA_CEI_QoC_Satisfaction_2021%2011%2030.pdf) and [here](https://rpubs.com/YJ_Choi/PMA_CEI_Sample).      
 
 PMA client data are collected at two time points using different modes:   
 1. **Face-to-face interview - at the end of facility visit**. Response rates are typically very high in all settings.      
@@ -147,7 +148,7 @@ _Analysis_: We compare demographic and socioeconomic characteristics of those in
 
 _Analysis_: We compare both satisfaction (measured using a four-point Likert scale) and experience (using 10-item quality of contraceptive counseling (QCC) scale score - reference forthcoming) between those included vs. excluded in the sample.  
 
-All data on demographic and socioeconomic characteristics and quality of care come from exit interview data in four countries/geographies: Burkina Faso, Kenya, and two states in Nigeria, Kano and Lagos. The exit surveys were conducted in early 2021. See below table for analysis sample sizes.    
+All data on demographic and socioeconomic characteristics and quality of care come from exit interview data in four countries/geographies: Burkina Faso, Kenya, and two states in Nigeria, Kano and Lagos. The exit surveys were conducted in early 2021. All data are accessed from [www.PMAdata.org](www.PMAdata.org). See below table for analysis sample sizes.    
 </div>
 
 #### 3.1. How different are those who are included vs. excluded in the sample? 
@@ -420,11 +421,11 @@ dtawide%>%
 ```
 Note: The difference in age is statistically significant in **Kenya** and **Lagos, Nigeria** (T-test with unequal variance P-value < 0.05). 
 
-#### 3.2. Is quality of care different between those who are included vs. excluded in the sample?   
+#### 3.2. Is reported quality of care different between those who are included vs. excluded in the sample?   
 <div class="alert alert-warning">
-There is no consistent pattern.    
-- Clients in the sample are more likely to report to be 'very satisfied' only in Burkina Faso and Kenya.   
-- Clients in the sample have reported slightly higher experience of care only in Kenya, but the difference is too small to be useful for programmatic purposes. 
+Here, results are inconsistent.    
+- Clients in the sample are more likely to report to be *very satisfied* only in Burkina Faso and Kenya. Note that in the Nigerian states, about 70% of clients reported to be *very satisfied* and the measure may not be able to differentiate this perceived quality.         
+- In terms of experience of care score, clients in the sample have reported slightly higher score in Kenya, but the difference is too small to be useful for programmatic purposes. In other settings, it is comparable between the two groups.       
 </div>
 ```{r dta_Table5}
 dta<-read_excel(path = pathfile,
@@ -566,9 +567,52 @@ dtawide%>%
 ```
 Note: The difference in the QCC score is statistically significant in **Kenya** (T-test with unequal variance P-value < 0.05). 
 
+
+##### 3.2.1. Controlling for background characteristics, do women in the sample still report to be 'very satisfied'?   
+<div class="alert alert-warning">
+Satisfaction reflects how their experiences aligned with *the care they expected*, which may be confounded with clients background characteristics. So it is important to assess further whether or not the bivariate association remain, after holding background characteristics same.  
+
+Multivariate regression analysis showed that, **in Burkina Faso and Kenya, clients who are included in the sample more likely have reported to be very satisfied, controlled for age, household wealth, and education**.   
+</div>
+
+```{r dta_regression, results='asis'}
+dta<-read_excel(path = pathfile,
+                sheet = "Regression_ysatisfiedvery",
+                col_names = TRUE, 
+                range = "A1:E11")%>%
+    rename(Variable = ...1)%>%
+    mutate(
+       Variable = ifelse(is.na(Variable)==T, "", Variable),
+       Variable = ifelse(Variable=="HH percceived economic ladder 5 or higher", 
+                         "perceived HH wealth median or higher", 
+                         Variable),
+       Variable = ifelse(Variable=="Observations", 
+                         "number of clients", 
+                         Variable))%>%
+    filter(Variable!="Number of facility_ID")%>%
+    rename(
+        Characteristics.at.exit.interview = Variable, 
+        Burkina.Faso = "M3_BFP2", 
+        Kenya = "M3_KEP2", 
+        Kano.Nigeria = "M3_NGKanoP2",
+        Lagos.Nigeria = "M3_NGLagosP2")
+
+kable(dta, 
+      caption = "Odds ratio of being included in the phone intervew sample by characteristics measured at exit interview")%>%
+    column_spec(1, width = "20em")%>%
+    column_spec(2, width = "10em")%>%
+    column_spec(3, width = "10em")%>%
+    column_spec(4, width = "10em")%>%
+    column_spec(5, width = "10em")%>%
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed"), 
+                  position = "left",
+                  full_width = F)
+```
+Note: Results from a multivariable logistic regression model with robust standard errors to account for clustering of women within facilities. Analysis was done for each country/geography separately. 95% confidence interval in parentheses. *** p<0.01, ** p<0.05, * p<0.1
+
 #### 4. Implications to design a client phone surveys 
 
-4.1. Access to phone is still a significant barrier among female clients in certain low resource settings such as Kano, Nigeria (remote rural state) and Burkina Faso (with relatively less resources) - see below distribution.   
+**4.1.** Access to phone is still a significant barrier among female clients in certain low resource settings such as Kano, Nigeria (remote rural state) and Burkina Faso (with relatively less resources) - see below distribution.   
 
 ```{r dta_Table2, restuls='hide', fig.width=5, fig.height=3}
 dta<-read_excel(path = pathfile,
@@ -652,13 +696,13 @@ dta%>%
 ```
 Note: PMA phone follow up was done only women who received contraceptive method(s) or prescription at the facility visit, since an objective of the follow-up phone survey was to study contraceptive discontinuation. This group of women has comparable background characteristics with the rest clients (results not shown).   
 
+**4.2.** Even in settings where access to phone is higher (Kenya and Lagos, Nigeria), the sample is still biased upward significantly. Our results suggest in all settings, client phone survey sample will have more educated women. 
+
+**4.3.** Meanwhile, **specific experience during the visit is comparable in all settings. This may be because women received comparable care at facilities, regardless of their background characteristics that are studied here.** This is a good news for potential client phone surveys!    
+
+**4.4.** However, in Burkina Faso and Kenya, reported satisfaction - which reflects expectation and may be confounded by clients background characteristics - is higher among clients included in the phone survey sample. **This suggests that phone surveys should be careful in measuring subjective outcome of care quality and, rather, should focus more on specific experience.** 
+
 ---
-
-4.2. Even in settings where access to phone is higher (Kenya and Lagos, Nigeria), the sample is still biased upward significantly. Our results suggest in all settings, client phone survey sample will have more educated women. 
-
----
-
-4.3. Meanwhile, reported satisfaction and specific experience during the visit are comparable in all settings. This may be because women received comparable care at facilities, regardless of their background characteristics that are studied here. This is a good news for potential client phone surveys!        
 
 #### 5. Limitations and methodological note  
 **5.1. How strong is the assumption?**     
