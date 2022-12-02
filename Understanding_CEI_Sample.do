@@ -714,17 +714,20 @@ save "$dataanalysis/CR_`survey'.dta", replace
 set more off
 foreach survey in $surveylist{	
 use "$dataanalysis/CRFU_`survey'.dta", clear	
-			
+	
 			sum correct_person call_consent CEI_result 
 			/*in the public data, no variation in these variables...*/
 			*gen yycontact = correct_person==1
 			*gen yyconsent = call_consent==1
 			gen yycomplete= CEI_result==1
-				
-		keep CQmetainstanceID metainstanceID yy* todaySIF
+					
+			gen today2 = substr(today, 1, 10)
+			gen todaySIFpf = date(today2, "YMD")
+			format todaySIFpf %td
+			codebook todaySIFpf
+			
+		keep CQmetainstanceID metainstanceID yy* todaySIFpf
 		
-		rename todaySIF todaySIFpf
-
 		capture drop _merge
 			
 		sort CQmetainstanceID

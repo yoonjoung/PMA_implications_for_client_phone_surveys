@@ -54,23 +54,20 @@ pathfile<-"./Understanding_CEI_Sample.xlsx"
 excel_sheets(pathfile)
 ```
 
-### 1. Why this anaysis? 
+#### 1. Why this analysis? 
 <div class="alert alert-info">
 **What is this analysis for?** 
 
-There's rapidly growing interest to measure and understand quality of care - especially experience among clients. However, it is challenging to conduct conventional client exit interviews in many low-resource settings due to resource constraints, and innovative approaches have been used to obtain information from clients such as SMS, phone interviews, and surveys on social media platforms. 
+There's rapidly growing interest to measure and understand quality of care - especially experience among clients. However, it is challenging to conduct conventional client exit interviews in many low-resource settings due to resource constraints, and innovative approaches have been used to obtain information from clients such as SMS, phone interviews, and surveys on social media platforms.    
 
-However, client sampling faces many challenges from getting a good quality sampling frame to low contact and response rates. Critical remaining questions are **how much bias is in samples of such assessments**, and **if (and how much) the sample bias matters to understand clients' experience of care**. 
+However, client sampling faces many challenges from getting a good quality sampling frame to low contact and response rates. Critical remaining questions are **how much bias is in samples of such assessments**, and **if (and how much) the sample bias matters to understand clients' experience of care**.    
 
-We explore these questions, using PMA family planning client data from four countries/geographies: Burkina Faso, Kenya, and two states in Nigeria, Kano and Lagos.   
-</div>
+---
+We explore these questions, using PMA family planning client data from four countries/geographies: Burkina Faso, Kenya, and two states in Nigeria, Kano and Lagos. Implications from this analysis would be most appropriate for phone surveys, since other modes have additional barriers such as literacy and use of social media.   </div>
 
-Note:    
-1. Implications from this analysis would be most appropriate for phone surveys, since other modes have additional barriers such as literacy and use of social media.   
-2. For more information on the PMA, [see here](www.pmadata.org).    
-3. For PMA client sampling methods, [see here](https://rpubs.com/YJ_Choi/PMA_CEI_Sample).      
+Note: For more information on the PMA, [see here](www.pmadata.org). For PMA client sampling methods and implementation, [see here](https://github.com/yoonjoung/PMA_implications_for_client_phone_surveys/blob/main/PMA_CEI_QoC_Satisfaction_2021%2011%2030.pdf) and [here](https://rpubs.com/YJ_Choi/PMA_CEI_Sample).      
 
-### 2. Data and methods
+#### 2. Data and methods
 
 PMA client data are collected at two time points using different modes:   
 1. **Face-to-face interview - at the end of facility visit**. Response rates are typically very high in all settings.      
@@ -125,7 +122,7 @@ data_long$IDtarget=match(data_long$target, nodes$name)-1
 # Prepare colour scale (7-class Greens and Blues)
 ColourScal ='d3.scaleOrdinal() .range([
         "#238B45", 
-        "#C6DBEF", "#9ECAE1", "#6BAED6", "#4292C6", "#084594"])'
+        "#FCBBA1", "#FDD0A2", "#C7E9C0", "#C6DBEF", "#084594"])'
 
 # Make the Network
 # set "iterations=0" to avoid automatic assignment of the box order
@@ -142,104 +139,24 @@ sankeyNetwork(Links = data_long, Nodes = nodes,
 
 **Questions and Methods**  
 
-1. How much background characteristics change between the sampling frame and final sample of a client phone survey? Considering that access to a phone is required but not necessarily universal in certain settings, it may results in a sample that is more likely to be wealthy and educated than those who are not included in the sample.    
+**1. How much background characteristics change between the sampling frame and final sample of a client phone survey?** Considering that access to a phone is required but not necessarily universal in certain settings, it may result in a sample that is more likely to be wealthy and educated than those who are not included in the sample.    
 
-_Analysis_: We compare demographic and socioeconomic characteristics of those included vs. excluded in the sample.    
+_Analysis_: We compare demographic and socioeconomic characteristics of those included <span style="color: #084594;">(navy blue part on the right panel above)</span> vs. excluded in the sample (the rest on the right panel).    
 
-2. Does the sample produce biased measures? *Ideally,* there should be equal (and high) quality of care - both experience and process of care - regardless of clients' characteristics. If that holds true, biased sample may not be detrimental to assess and monitor.       
+**2. Does the sample produce biased measures?** *Ideally,* there should be equal (and high) quality of care - both experience and process of care - regardless of clients' characteristics. If that holds true, biased sample may not be detrimental to assess and monitor.       
 
-_Analysis_: We compare both satisfaction (measured using a four-point Likert scale) and experience (using 10-item quality of contraceptive counseling) between those included vs. excluded in the sample.  
+_Analysis_: We compare both satisfaction (measured using a four-point Likert scale) and experience (using 10-item quality of contraceptive counseling (QCC) scale score - reference forthcoming) between those included vs. excluded in the sample.  
 
-*All data on demographic and socioeconomic characteristics and quality of care come from exit interview data in four countries/geographies: Burkina Faso, Kenya, and two states in Nigeria, Kano and Lagos.*  
+All data on demographic and socioeconomic characteristics and quality of care come from exit interview data in four countries/geographies: Burkina Faso, Kenya, and two states in Nigeria, Kano and Lagos. The exit surveys were conducted in early 2021. See below table for analysis sample sizes.    
 </div>
 
-### 3.0. What would be the response rate?   
-
-```{r dta_Table2, restuls='hide', fig.width=5, fig.height=3}
-dta<-read_excel(path = pathfile,
-                sheet = "Table2",
-                col_names = TRUE, 
-                range = "A1:K12")%>%
-    mutate(
-        survey="", 
-        survey=ifelse(xsurvey=="BFP2", "Burkina Faso",
-                      ifelse(xsurvey=="KEP2", "Kenya",
-                             ifelse(xsurvey=="NGKanoP2", "Nigeria, Kano",        
-                                    ifelse(xsurvey=="NGLagosP2", "Nigeria, Lagos",      
-                                           survey))))
-    )
-
-dta%>%
-    plot_ly(
-        y = ~survey,
-        type="bar",
-        x = ~pct_ceifu, name = "Completed phone interview",
-        marker = list(color = bluecolors[7]), 
-        text = ~pct_ceifu, 
-        textposition = 'outside', 
-        textfont = list(size= c(12))
-    )%>%
-    layout(
-        xaxis=list(title = "<b>% of clients**</b>", range = c(0, 100)), 
-        yaxis=list(title = "", autorange = "reversed") 
-    )
-```
-
-```{r dta_Table3, results='asis', fig.width=8, fig.height=3}
-dta<-read_excel(path = pathfile,
-                sheet = "Table3",
-                col_names = TRUE, 
-                range = "A1:K12")%>%
-    mutate(
-        survey="", 
-        survey=ifelse(xsurvey=="ALL", "All",
-                      ifelse(xsurvey=="BFP2", "Burkina Faso",
-                             ifelse(xsurvey=="KEP2", "Kenya",
-                                    ifelse(xsurvey=="NGKanoP2", "Nigeria, Kano",        
-                                           ifelse(xsurvey=="NGLagosP2", "Nigeria, Lagos",      
-                                                  survey)))))
-    )
-
-#dta$survey<-factor(dta$survey, 
-#                   levels = unique(dta$survey) 
-#                   [order(dta$pct_ceifu, decreasing = FALSE)])
-
-dta%>%
-    filter(survey!="All")%>%
-    plot_ly(
-        x = ~survey,
-        type="bar", 
-        y = ~pct_ceifu, name = "Completed phone survey",
-        marker = list(color = bluecolors[7]), 
-        #text = ~round(pct_ceifu, 0), 
-        #textposition = 'outside', 
-        #textfont = list(size= c(12))
-        )%>%         
-    add_trace(y = ~pct_lost, 
-              name = "Lost to follow up",
-              marker = list(color = bluecolors[5]))%>%       
-    add_trace(y = ~pct_nophone, 
-              name = "No FP method*",
-              marker = list(color = bluecolors[3]))%>%         
-    add_trace(y = ~pct_nophone, 
-              name = "No access to phone",
-              marker = list(color = bluecolors[3]))%>%       
-    add_trace(y = ~pct_noconsent, 
-              name = "No consent",
-              marker = list(color = bluecolors[2]))%>%       
-    layout(
-        barmode = 'stack', 
-        paper_bgcolor='#FAFAFA', plot_bgcolor='#FAFAFA',
-        legend = list(x = 100, y = 0.5), 
-        yaxis=list(title = "<b>% of clients</b>", range = c(0, 100)), 
-        xaxis=list(title = "") 
-    )
-```
-Note: PMA phone follow up was done only women who received contraceptive method(s) or prescription at the facility visit.  
-
-### 3.1. How different are those who are included vs. excluded in the sample? 
-<div class="alert alert-danger">
-Clients in the sample tend to: perceive themselves to be wealthier, have higher education, and be older. But, the differences are not statistically significant in most cases. </div>
+#### 3.1. How different are those who are included vs. excluded in the sample? 
+<div class="alert alert-warning">
+As expected, clients included in the sample are relatively advantaged in terms of background characteristics. They tend to:   
+- have higher education (in all countries/geographies),    
+- perceive themselves to be wealthier (in Kenya and Lagos, Nigeria), and   
+- be older (in Kenya and Lagos, Nigeria).    
+</div>
 ```{r dta_Table4}
 dta<-read_excel(path = pathfile,
                 sheet = "Table4",
@@ -503,10 +420,11 @@ dtawide%>%
 ```
 Note: The difference in age is statistically significant in **Kenya** and **Lagos, Nigeria** (T-test with unequal variance P-value < 0.05). 
 
-### 3.2. Is quality of care different between those who are included vs. excluded in the sample?   
-<div class="alert alert-danger">
-- Clients in the sample are more likely to report to be 'very satisfied' but the differences are not statistically significant.   
-- Clients in the sample have reported slightly higher experience of care but the differences are neither meaningful nor statistically significant.   
+#### 3.2. Is quality of care different between those who are included vs. excluded in the sample?   
+<div class="alert alert-warning">
+There is no consistent pattern.    
+- Clients in the sample are more likely to report to be 'very satisfied' only in Burkina Faso and Kenya.   
+- Clients in the sample have reported slightly higher experience of care only in Kenya, but the difference is too small to be useful for programmatic purposes. 
 </div>
 ```{r dta_Table5}
 dta<-read_excel(path = pathfile,
@@ -648,18 +566,108 @@ dtawide%>%
 ```
 Note: The difference in the QCC score is statistically significant in **Kenya** (T-test with unequal variance P-value < 0.05). 
 
-### 4. Implications to design a client surveys via remote data collection 
+#### 4. Implications to design a client phone surveys 
 
-- Access to phone is still a barrier among female clients in certain low resource settings such as Kano, Nigeria (remote rural state) and Burkina Faso (with relatively less resources).    
-- The phone survey samples are biased in terms of wealth, education, and age.   
-- However, there is no statistically significant or programmatically meaningful differences in terms of self-reported satisfaction and experience of care.   
+4.1. Access to phone is still a significant barrier among female clients in certain low resource settings such as Kano, Nigeria (remote rural state) and Burkina Faso (with relatively less resources) - see below distribution.   
 
-### 5. Limitations and methodological note  
-1. How strong is the assumption? This exercise is reasonably acceptable, if:  
-(1) sample recruitment is done actively in-person - *as opposed to more passive approaches such as relying on clients scanning QR code*; and   
-(2) the data collection is done via computer assisted telephone interviewing (CATI) - *as opposed to using short message services (SMS), self-administered web-based interview, or interactive voice response interviews*.   
+```{r dta_Table2, restuls='hide', fig.width=5, fig.height=3}
+dta<-read_excel(path = pathfile,
+                sheet = "Table2",
+                col_names = TRUE, 
+                range = "A1:K12")%>%
+    mutate(
+        survey="", 
+        survey=ifelse(xsurvey=="BFP2", "Burkina Faso",
+                      ifelse(xsurvey=="KEP2", "Kenya",
+                             ifelse(xsurvey=="NGKanoP2", "Nigeria, Kano",        
+                                    ifelse(xsurvey=="NGLagosP2", "Nigeria, Lagos",      
+                                           survey))))
+    )
 
-2. In PMA client sample follow-up, length of follow-up interval ranged from 4 to 6 months. With incentives and shorter interval between sampling and interview, contact rate - and subsequently response rate - may be higher.    
+dta%>%
+    plot_ly(
+        y = ~survey,
+        type="bar",
+        x = ~pct_ceifu, name = "Completed phone interview",
+        marker = list(color = bluecolors[7]), 
+        text = ~pct_ceifu, 
+        textposition = 'outside', 
+        textfont = list(size= c(12))
+    )%>%
+    layout(
+        xaxis=list(title = "<b>% of clients**</b>", range = c(0, 100)), 
+        yaxis=list(title = "", autorange = "reversed") 
+    )
+```
+
+```{r dta_Table3, results='asis', fig.width=8, fig.height=3}
+dta<-read_excel(path = pathfile,
+                sheet = "Table3",
+                col_names = TRUE, 
+                range = "A1:K12")%>%
+    mutate(
+        survey="", 
+        survey=ifelse(xsurvey=="ALL", "All",
+                      ifelse(xsurvey=="BFP2", "Burkina Faso",
+                             ifelse(xsurvey=="KEP2", "Kenya",
+                                    ifelse(xsurvey=="NGKanoP2", "Nigeria, Kano",        
+                                           ifelse(xsurvey=="NGLagosP2", "Nigeria, Lagos",      
+                                                  survey)))))
+    )
+
+#dta$survey<-factor(dta$survey, 
+#                   levels = unique(dta$survey) 
+#                   [order(dta$pct_ceifu, decreasing = FALSE)])
+
+dta%>%
+    filter(survey!="All")%>%
+    plot_ly(
+        x = ~survey,
+        type="bar", 
+        y = ~pct_ceifu, name = "Completed phone survey",
+        marker = list(color = bluecolors[7]) 
+        #text = ~round(pct_ceifu, 0), 
+        #textposition = 'outside', 
+        #textfont = list(size= c(12))
+        )%>%         
+    add_trace(y = ~pct_lost, 
+              name = "Lost to follow up",
+              marker = list(color = bluecolors[2]))%>%       
+    add_trace(y = ~pct_nophone, 
+              name = "No FP method*",
+              marker = list(color = greencolors[2]))%>%         
+    add_trace(y = ~pct_nophone, 
+              name = "No access to phone",
+              marker = list(color = orangecolors[2]))%>%       
+    add_trace(y = ~pct_noconsent, 
+              name = "No consent",
+              marker = list(color = redcolors[2]))%>%       
+    layout(
+        barmode = 'stack', 
+        paper_bgcolor='#FAFAFA', plot_bgcolor='#FAFAFA',
+        legend = list(x = 100, y = 0.5), 
+        yaxis=list(title = "<b>% of clients</b>", range = c(0, 100)), 
+        xaxis=list(title = "") 
+    )
+```
+Note: PMA phone follow up was done only women who received contraceptive method(s) or prescription at the facility visit, since an objective of the follow-up phone survey was to study contraceptive discontinuation. This group of women has comparable background characteristics with the rest clients (results not shown).   
+
+---
+
+4.2. Even in settings where access to phone is higher (Kenya and Lagos, Nigeria), the sample is still biased upward significantly. Our results suggest in all settings, client phone survey sample will have more educated women. 
+
+---
+
+4.3. Meanwhile, reported satisfaction and specific experience during the visit are comparable in all settings. This may be because women received comparable care at facilities, regardless of their background characteristics that are studied here. This is a good news for potential client phone surveys!        
+
+#### 5. Limitations and methodological note  
+**5.1. How strong is the assumption?**     
+This exercise is reasonably acceptable, if:  
+- sample recruitment and enrollment is done actively in-person - *as opposed to more passive approaches such as relying on clients scanning QR code*; and   
+- the data collection is done via computer assisted telephone interviewing (CATI) - *as opposed to using short message services (SMS), self-administered web-based interview, or interactive voice response interviews*.   
+
+**5.2. What if the interval between sampling and interview is short?**    
+In PMA client sample follow-up, length of follow-up interval ranged from 4 to 6 months. With incentives and shorter interval between sampling and interview, contact rate - and subsequently response rate - may be higher.    
 ```{r showinterval, results="asis"}
 dta<-read_excel(path = pathfile,
                 sheet = "Table2",
@@ -674,22 +682,23 @@ dta<-read_excel(path = pathfile,
                       survey))))
     )%>%
     filter(survey!="")%>%
-    select(survey, interval_in_months)
+    select(survey, n_clients, interval_in_months)%>%
+    rename(number_of_clients_at_baseline = n_clients)
 
 kable(dta, 
       caption = "Mean length of follow-up interval in months by survey")%>%
-    column_spec(1, width = "20em")%>%
-    column_spec(1, width = "20em")%>%
+    column_spec(1, width = "15em")%>%
+    column_spec(2, width = "15em")%>%
+    column_spec(3, width = "15em")%>%
     kable_styling(bootstrap_options = c("hover", "condensed"), 
                   position = "left",
                   full_width = F)
 
 ```
 
-3. PMA client sample is convenient random sample, conducted in a subset of facilities sampled for facility assessment (see below bar graph). The client sampling frame is FP clients who attended medium-to-high volume facilities. Thus, it systematically excludes those who visit small and/or lower level facilities. In addition, no client data were collected from pharmacies.   
-
-However, it is suggested that back ground characteristics of this sample are by and large similar to those who obtained contraception in the relatively recent time period at the population level. [see here](https://rpubs.com/YJ_Choi/PMA_CEI_Sample)  
-```{r dta_Table1, results='asis', fig.width=5, fig.height=3}
+**5.3. Is PMA client sample representative of all clients in the country?**
+PMA client sample is convenient random sample, conducted in a subset of facilities sampled for facility assessment (see below bar graph). The client sampling frame is FP clients who attended medium-to-high volume facilities. Thus, it systematically excludes those who visit small and/or lower-level facilities. In addition, no client data were collected from pharmacies. **However, it is suggested that back ground characteristics of this sample are by and large similar to those who obtained contraception in the relatively recent time period at the population level.** [See here](https://github.com/yoonjoung/PMA_implications_for_client_phone_surveys/blob/main/PMA_CEI_QoC_Satisfaction_2021%2011%2030.pdf) and [here](https://rpubs.com/YJ_Choi/PMA_CEI_Sample).   
+```{r dta_Table1, results='hide', fig.width=5, fig.height=3}
 dta<-read_excel(path = pathfile,
                 sheet = "Table1",
                 col_names = TRUE, 
@@ -722,3 +731,5 @@ dta%>%
     )
 ```
 
+---
+See [GitHub](https://github.com/yoonjoung/PMA_implications_for_client_phone_surveys) for data, code, and more information. For typos, errors, and questions, contact YJ Choi at [www.isquared.global](www.isquared.global).
