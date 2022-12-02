@@ -148,7 +148,9 @@ _Analysis_: We compare demographic and socioeconomic characteristics of those in
 
 _Analysis_: We compare both satisfaction (measured using a four-point Likert scale) and experience (using 10-item quality of contraceptive counseling (QCC) scale score - reference forthcoming) between those included vs. excluded in the sample.  
 
-All data on demographic and socioeconomic characteristics and quality of care come from exit interview data in four countries/geographies: Burkina Faso, Kenya, and two states in Nigeria, Kano and Lagos. The exit surveys were conducted in early 2021. All data are accessed from [www.PMAdata.org](www.PMAdata.org). See below table for analysis sample sizes.    
+All data on demographic and socioeconomic characteristics and quality of care come from exit interview data in four countries/geographies: Burkina Faso, Kenya, and two states in Nigeria, Kano and Lagos. The exit surveys were conducted in early 2021. 
+
+**All data are accessible at  [www.PMAdata.org](www.PMAdata.org)**. See below table for analysis sample sizes.    
 </div>
 
 #### 3.1. How different are those who are included vs. excluded in the sample? 
